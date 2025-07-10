@@ -1,0 +1,9 @@
+{
+    "name": "copilot-training",
+    "private": true,
+    "workspaces": [
+      "logic",
+      "ui"
+    ]
+  }
+  

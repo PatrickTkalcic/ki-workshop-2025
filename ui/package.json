@@ -1,0 +1,19 @@
+{
+  "name": "ui",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "vite dev",
+    "build": "vite build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "vite": "^7.0.0"
+  },
+  "dependencies": {
+    "logic": "file:../logic"
+  }
+}
