@@ -1,0 +1,747 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "DSL Expression Evaluator API",
+    "version": "1.0.0",
+    "description": "REST API for evaluating mathematical expressions using a domain-specific expression language (DSL). Supports integer arithmetic with operators (+, -, *, /), parentheses, and unary minus with proper precedence handling.",
+    "contact": {
+      "name": "API Support"
+    },
+    "license": {
+      "name": "ISC"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3001",
+      "description": "Development server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Health",
+      "description": "Health check endpoints"
+    },
+    {
+      "name": "Information",
+      "description": "API information and documentation"
+    },
+    {
+      "name": "Evaluation",
+      "description": "Expression evaluation endpoints"
+    },
+    {
+      "name": "Tokenization",
+      "description": "Lexical analysis endpoints"
+    },
+    {
+      "name": "Parsing",
+      "description": "Syntax analysis endpoints"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": ["Health"],
+        "summary": "Health check",
+        "description": "Returns the current health status of the API server",
+        "operationId": "getHealth",
+        "responses": {
+          "200": {
+            "description": "Server is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2025-11-18T13:45:30.123Z"
+                    }
+                  },
+                  "required": ["status", "timestamp"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/info": {
+      "get": {
+        "tags": ["Information"],
+        "summary": "Get API information",
+        "description": "Returns comprehensive information about the API including available endpoints, supported operators, and features",
+        "operationId": "getApiInfo",
+        "responses": {
+          "200": {
+            "description": "API information retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "example": "DSL Expression Evaluator API"
+                    },
+                    "version": {
+                      "type": "string",
+                      "example": "1.0.0"
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "REST API for evaluating mathematical expressions"
+                    },
+                    "endpoints": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "method": {
+                            "type": "string",
+                            "example": "POST"
+                          },
+                          "path": {
+                            "type": "string",
+                            "example": "/api/evaluate"
+                          },
+                          "description": {
+                            "type": "string",
+                            "example": "Evaluate an expression and return the result"
+                          }
+                        }
+                      }
+                    },
+                    "supportedOperators": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": ["+", "-", "*", "/"]
+                    },
+                    "features": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": ["Integer arithmetic", "Operator precedence", "Parentheses", "Unary minus", "Error handling"]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/evaluate": {
+      "post": {
+        "tags": ["Evaluation"],
+        "summary": "Evaluate mathematical expression",
+        "description": "Evaluates a mathematical expression and returns the integer result. Supports operators (+, -, *, /), parentheses, and unary minus. Division uses truncation toward zero.",
+        "operationId": "evaluateExpression",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EvaluateRequest"
+              },
+              "examples": {
+                "simple": {
+                  "summary": "Simple addition",
+                  "value": {
+                    "expression": "2 + 3"
+                  }
+                },
+                "precedence": {
+                  "summary": "Operator precedence",
+                  "value": {
+                    "expression": "2 + 3 * 4"
+                  }
+                },
+                "parentheses": {
+                  "summary": "Parentheses override",
+                  "value": {
+                    "expression": "(2 + 3) * 4"
+                  }
+                },
+                "unaryMinus": {
+                  "summary": "Unary minus with division",
+                  "value": {
+                    "expression": "-(3 + 4*2) / 5"
+                  }
+                },
+                "division": {
+                  "summary": "Integer division with truncation",
+                  "value": {
+                    "expression": "7 / 3"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Expression evaluated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvaluateResponse"
+                },
+                "examples": {
+                  "simple": {
+                    "summary": "Simple result",
+                    "value": {
+                      "result": 5,
+                      "expression": "2 + 3"
+                    }
+                  },
+                  "precedence": {
+                    "summary": "Precedence result",
+                    "value": {
+                      "result": 14,
+                      "expression": "2 + 3 * 4"
+                    }
+                  },
+                  "complex": {
+                    "summary": "Complex expression result",
+                    "value": {
+                      "result": -2,
+                      "expression": "-(3 + 4*2) / 5"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/api/tokenize": {
+      "post": {
+        "tags": ["Tokenization"],
+        "summary": "Tokenize expression",
+        "description": "Performs lexical analysis on an expression and returns an array of tokens. Useful for debugging or understanding how the expression is parsed.",
+        "operationId": "tokenizeExpression",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TokenizeRequest"
+              },
+              "examples": {
+                "simple": {
+                  "summary": "Simple expression",
+                  "value": {
+                    "expression": "2 + 3"
+                  }
+                },
+                "complex": {
+                  "summary": "Complex expression",
+                  "value": {
+                    "expression": "(2 + 3) * 4"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Expression tokenized successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenizeResponse"
+                },
+                "examples": {
+                  "simple": {
+                    "summary": "Tokenized simple expression",
+                    "value": {
+                      "tokens": [
+                        {
+                          "type": "INT",
+                          "value": "2",
+                          "index": 0
+                        },
+                        {
+                          "type": "PLUS",
+                          "value": "+",
+                          "index": 2
+                        },
+                        {
+                          "type": "INT",
+                          "value": "3",
+                          "index": 4
+                        },
+                        {
+                          "type": "EOF",
+                          "value": "",
+                          "index": 5
+                        }
+                      ],
+                      "expression": "2 + 3"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/api/parse": {
+      "post": {
+        "tags": ["Parsing"],
+        "summary": "Parse expression into AST",
+        "description": "Performs syntax analysis on an expression and returns an Abstract Syntax Tree (AST). The AST represents the hierarchical structure of the expression.",
+        "operationId": "parseExpression",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ParseRequest"
+              },
+              "examples": {
+                "literal": {
+                  "summary": "Integer literal",
+                  "value": {
+                    "expression": "42"
+                  }
+                },
+                "binary": {
+                  "summary": "Binary expression",
+                  "value": {
+                    "expression": "2 + 3"
+                  }
+                },
+                "complex": {
+                  "summary": "Complex expression",
+                  "value": {
+                    "expression": "(2 + 3) * 4"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Expression parsed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParseResponse"
+                },
+                "examples": {
+                  "literal": {
+                    "summary": "Integer literal AST",
+                    "value": {
+                      "ast": {
+                        "kind": "IntegerLiteral",
+                        "value": 42,
+                        "index": 0
+                      },
+                      "expression": "42"
+                    }
+                  },
+                  "binary": {
+                    "summary": "Binary expression AST",
+                    "value": {
+                      "ast": {
+                        "kind": "BinaryExpr",
+                        "operator": "+",
+                        "left": {
+                          "kind": "IntegerLiteral",
+                          "value": 2,
+                          "index": 0
+                        },
+                        "right": {
+                          "kind": "IntegerLiteral",
+                          "value": 3,
+                          "index": 4
+                        },
+                        "index": 2
+                      },
+                      "expression": "2 + 3"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "EvaluateRequest": {
+        "type": "object",
+        "required": ["expression"],
+        "properties": {
+          "expression": {
+            "type": "string",
+            "description": "The mathematical expression to evaluate",
+            "example": "2 + 3 * 4",
+            "minLength": 1
+          }
+        }
+      },
+      "EvaluateResponse": {
+        "type": "object",
+        "required": ["result", "expression"],
+        "properties": {
+          "result": {
+            "type": "integer",
+            "description": "The computed integer result",
+            "example": 14
+          },
+          "expression": {
+            "type": "string",
+            "description": "The original expression that was evaluated",
+            "example": "2 + 3 * 4"
+          }
+        }
+      },
+      "TokenizeRequest": {
+        "type": "object",
+        "required": ["expression"],
+        "properties": {
+          "expression": {
+            "type": "string",
+            "description": "The expression to tokenize",
+            "example": "2 + 3",
+            "minLength": 1
+          }
+        }
+      },
+      "TokenizeResponse": {
+        "type": "object",
+        "required": ["tokens", "expression"],
+        "properties": {
+          "tokens": {
+            "type": "array",
+            "description": "Array of tokens produced by the lexer",
+            "items": {
+              "$ref": "#/components/schemas/Token"
+            }
+          },
+          "expression": {
+            "type": "string",
+            "description": "The original expression that was tokenized",
+            "example": "2 + 3"
+          }
+        }
+      },
+      "ParseRequest": {
+        "type": "object",
+        "required": ["expression"],
+        "properties": {
+          "expression": {
+            "type": "string",
+            "description": "The expression to parse into an AST",
+            "example": "2 + 3",
+            "minLength": 1
+          }
+        }
+      },
+      "ParseResponse": {
+        "type": "object",
+        "required": ["ast", "expression"],
+        "properties": {
+          "ast": {
+            "$ref": "#/components/schemas/ASTNode"
+          },
+          "expression": {
+            "type": "string",
+            "description": "The original expression that was parsed",
+            "example": "2 + 3"
+          }
+        }
+      },
+      "Token": {
+        "type": "object",
+        "required": ["type", "value", "index"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["INT", "PLUS", "MINUS", "STAR", "SLASH", "LPAREN", "RPAREN", "EOF"],
+            "description": "The type of token"
+          },
+          "value": {
+            "type": "string",
+            "description": "The string value of the token"
+          },
+          "index": {
+            "type": "integer",
+            "description": "The position index in the source string",
+            "minimum": 0
+          }
+        },
+        "example": {
+          "type": "INT",
+          "value": "42",
+          "index": 0
+        }
+      },
+      "ASTNode": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/IntegerLiteral"
+          },
+          {
+            "$ref": "#/components/schemas/BinaryExpr"
+          },
+          {
+            "$ref": "#/components/schemas/UnaryExpr"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "kind",
+          "mapping": {
+            "IntegerLiteral": "#/components/schemas/IntegerLiteral",
+            "BinaryExpr": "#/components/schemas/BinaryExpr",
+            "UnaryExpr": "#/components/schemas/UnaryExpr"
+          }
+        }
+      },
+      "IntegerLiteral": {
+        "type": "object",
+        "required": ["kind", "value", "index"],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": ["IntegerLiteral"],
+            "description": "Discriminator for AST node type"
+          },
+          "value": {
+            "type": "integer",
+            "description": "The integer value"
+          },
+          "index": {
+            "type": "integer",
+            "description": "Position in source",
+            "minimum": 0
+          }
+        },
+        "example": {
+          "kind": "IntegerLiteral",
+          "value": 42,
+          "index": 0
+        }
+      },
+      "BinaryExpr": {
+        "type": "object",
+        "required": ["kind", "operator", "left", "right", "index"],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": ["BinaryExpr"],
+            "description": "Discriminator for AST node type"
+          },
+          "operator": {
+            "type": "string",
+            "enum": ["+", "-", "*", "/"],
+            "description": "The binary operator"
+          },
+          "left": {
+            "$ref": "#/components/schemas/ASTNode"
+          },
+          "right": {
+            "$ref": "#/components/schemas/ASTNode"
+          },
+          "index": {
+            "type": "integer",
+            "description": "Position in source",
+            "minimum": 0
+          }
+        },
+        "example": {
+          "kind": "BinaryExpr",
+          "operator": "+",
+          "left": {
+            "kind": "IntegerLiteral",
+            "value": 2,
+            "index": 0
+          },
+          "right": {
+            "kind": "IntegerLiteral",
+            "value": 3,
+            "index": 4
+          },
+          "index": 2
+        }
+      },
+      "UnaryExpr": {
+        "type": "object",
+        "required": ["kind", "operator", "operand", "index"],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": ["UnaryExpr"],
+            "description": "Discriminator for AST node type"
+          },
+          "operator": {
+            "type": "string",
+            "enum": ["-"],
+            "description": "The unary operator"
+          },
+          "operand": {
+            "$ref": "#/components/schemas/ASTNode"
+          },
+          "index": {
+            "type": "integer",
+            "description": "Position in source",
+            "minimum": 0
+          }
+        },
+        "example": {
+          "kind": "UnaryExpr",
+          "operator": "-",
+          "operand": {
+            "kind": "IntegerLiteral",
+            "value": 5,
+            "index": 1
+          },
+          "index": 0
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["error"],
+        "properties": {
+          "error": {
+            "type": "object",
+            "required": ["type", "message"],
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": ["LexError", "ParseError", "EvalError", "ValidationError", "ServerError"],
+                "description": "The category of error"
+              },
+              "message": {
+                "type": "string",
+                "description": "Human-readable error message"
+              },
+              "index": {
+                "type": "integer",
+                "description": "Position in source where error occurred (if applicable)",
+                "minimum": 0
+              },
+              "expression": {
+                "type": "string",
+                "description": "The expression that caused the error (if applicable)"
+              }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Bad request - Invalid input or expression error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "examples": {
+              "lexError": {
+                "summary": "Lexical error - invalid character",
+                "value": {
+                  "error": {
+                    "type": "LexError",
+                    "message": "Unexpected character 'x' at index 4",
+                    "index": 4,
+                    "expression": "2 + x"
+                  }
+                }
+              },
+              "parseError": {
+                "summary": "Parse error - syntax error",
+                "value": {
+                  "error": {
+                    "type": "ParseError",
+                    "message": "Expected ')' after expression",
+                    "index": 5,
+                    "expression": "(1 + 2"
+                  }
+                }
+              },
+              "evalError": {
+                "summary": "Evaluation error - division by zero",
+                "value": {
+                  "error": {
+                    "type": "EvalError",
+                    "message": "Division by zero",
+                    "index": 2,
+                    "expression": "5 / 0"
+                  }
+                }
+              },
+              "validationError": {
+                "summary": "Validation error - missing expression",
+                "value": {
+                  "error": {
+                    "type": "ValidationError",
+                    "message": "Expression is required and must be a string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "ServerError": {
+        "description": "Internal server error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "examples": {
+              "serverError": {
+                "summary": "Internal server error",
+                "value": {
+                  "error": {
+                    "type": "ServerError",
+                    "message": "An unexpected error occurred"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

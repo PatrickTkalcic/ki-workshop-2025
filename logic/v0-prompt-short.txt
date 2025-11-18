@@ -1,0 +1,164 @@
+Create a modern calculator web app for evaluating mathematical expressions with three main views: Calculator, Tokenizer, and Parser.
+
+## Core Features
+
+**Calculator View:**
+- Large input field with monospace font and real-time syntax highlighting (numbers in blue, operators in orange, parentheses in purple)
+- Number pad grid (0-9) and operator buttons (+, -, *, /)
+- Special buttons: parentheses, clear, backspace, equals
+- Large, bold result display with copy button
+- Collapsible history sidebar showing last 20 calculations with timestamps
+- Error display with error type badge and visual pointer to error position
+
+**Tokenizer View:**
+- Shows lexical analysis of expressions
+- Table displaying token type, value, and position index
+- Color-coded badges: INT (blue), operators (orange), parentheses (purple), EOF (gray)
+
+**Parser View:**
+- Interactive AST tree visualization with collapsible nodes
+- Node icons: 🔢 for integers, ⚡ for binary operations, ➖ for unary
+- Toggle between tree view and JSON view
+
+**Example Gallery:**
+- Pre-built examples: "2 + 3", "2 + 3 * 4", "(2 + 3) * 4", "-(3 + 4*2) / 5", "7 / 3"
+- Click to load and auto-evaluate
+
+## API Integration
+
+Connect to REST API at `http://localhost:3000`:
+
+```typescript
+// Evaluate
+POST /api/evaluate
+Body: { expression: string }
+Response: { result: number, expression: string }
+
+// Tokenize  
+POST /api/tokenize
+Body: { expression: string }
+Response: { tokens: Token[], expression: string }
+
+// Parse
+POST /api/parse
+Body: { expression: string }
+Response: { ast: ASTNode, expression: string }
+
+// Errors (400/500)
+{ error: { type: string, message: string, index?: number, expression?: string } }
+```
+
+## TypeScript Types
+
+```typescript
+type TokenType = 'INT' | 'PLUS' | 'MINUS' | 'STAR' | 'SLASH' | 'LPAREN' | 'RPAREN' | 'EOF';
+
+interface Token {
+  type: TokenType;
+  value: string;
+  index: number;
+}
+
+type ASTNode = IntegerLiteral | BinaryExpr | UnaryExpr;
+
+interface IntegerLiteral {
+  kind: 'IntegerLiteral';
+  value: number;
+  index: number;
+}
+
+interface BinaryExpr {
+  kind: 'BinaryExpr';
+  operator: '+' | '-' | '*' | '/';
+  left: ASTNode;
+  right: ASTNode;
+  index: number;
+}
+
+interface UnaryExpr {
+  kind: 'UnaryExpr';
+  operator: '-';
+  operand: ASTNode;
+  index: number;
+}
+```
+
+## Design System
+
+**Dark Mode (default):**
+- Background: slate-900
+- Surface: slate-800
+- Primary: blue-500
+- Accent: amber-500
+- Error: red-500
+- Success: green-500
+
+**Light Mode:**
+- Background: white
+- Surface: slate-50
+- Primary: blue-600
+- Accent: orange-600
+
+**Typography:**
+- Headings & body: Inter or system UI
+- Code/expressions: Fira Code or Monaco (monospace)
+
+## UI Requirements
+
+1. **Input Field:**
+   - Auto-focus on load
+   - Keyboard support (Enter to evaluate, Escape to clear, Backspace)
+   - Placeholder: "Enter expression (e.g., 2 + 3 * 4)"
+
+2. **Button Grid:**
+   - 3x4 number grid (0-9)
+   - Operator buttons visually distinct (orange/amber)
+   - Large, touch-friendly (min 44px)
+   - Hover effects with scale animation
+
+3. **History Panel:**
+   - Show "expression = result" with timestamp
+   - Click to reuse, delete individual entries
+   - Clear all button
+   - Persist in localStorage
+
+4. **Error Handling:**
+   - Show error type badges (LexError, ParseError, EvalError, ValidationError)
+   - Display error position with visual caret under problem character
+   - Animate error appearance
+
+5. **Tab Navigation:**
+   - Three tabs: Calculator | Tokenizer | Parser
+   - Smooth transitions
+
+6. **Responsive:**
+   - Mobile-first design
+   - Stack layout on small screens
+   - Collapsible history on mobile
+
+7. **Accessibility:**
+   - ARIA labels on all buttons
+   - Keyboard navigation
+   - Screen reader support
+
+## Key Interactions
+
+- Type or click to build expression
+- Press Enter or "=" to evaluate
+- Debounce API calls (300ms)
+- Show loading state during evaluation
+- Animate result changes
+- Copy result with toast notification
+- Switch tabs to see tokenization/parsing
+- Click examples to try them
+- Toggle dark/light mode
+
+## Error Examples
+
+Handle these gracefully:
+- "2 + x" → LexError: "Unexpected character 'x' at index 4"
+- "(1 + 2" → ParseError: "Expected ')' after expression"
+- "5 / 0" → EvalError: "Division by zero"
+- "" → ValidationError: "Expression cannot be empty"
+
+Use React with TypeScript, Tailwind CSS for styling, Framer Motion for animations, and Lucide React for icons. Make it polished, modern, and educational.

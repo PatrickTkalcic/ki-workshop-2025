@@ -1,0 +1,171 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+/* Updated Minecraft theme with authentic colors from cover art */
+:root {
+  --background: #87CEEB;
+  --foreground: #E8E8D0;
+  --card: #2D5016;
+  --card-foreground: #E8E8D0;
+  --popover: #1A3A3A;
+  --popover-foreground: #E8E8D0;
+  --primary: #8B7355;
+  --primary-foreground: #000000;
+  --secondary: #4A7C3B;
+  --secondary-foreground: #FFFFFF;
+  --muted: #556B5D;
+  --muted-foreground: #A5A5A5;
+  --accent: #FFD700;
+  --accent-foreground: #000000;
+  --destructive: #CC3300;
+  --destructive-foreground: #E8E8D0;
+  --border: #3C5530;
+  --input: #1A1A1A;
+  --ring: #8B7355;
+  --chart-1: #8B7355;
+  --chart-2: #3C5530;
+  --chart-3: #C9A661;
+  --chart-4: #5B6B5F;
+  --chart-5: #A89968;
+  --radius: 0px;
+  --sidebar: #2D5016;
+  --sidebar-foreground: #E8E8D0;
+  --sidebar-primary: #8B7355;
+  --sidebar-primary-foreground: #000000;
+  --sidebar-accent: #FFD700;
+  --sidebar-accent-foreground: #000000;
+  --sidebar-border: #3C5530;
+  --sidebar-ring: #8B7355;
+  --grass-dark: #4A7C3B;
+  --grass-light: #5A9C3B;
+  --dirt: #8B6F47;
+  --stone: #818181;
+  --water: #4391FF;
+}
+
+.dark {
+  --background: #87CEEB;
+  --foreground: #E8E8D0;
+  --card: #2D5016;
+  --card-foreground: #E8E8D0;
+  --popover: #1A3A3A;
+  --popover-foreground: #E8E8D0;
+  --primary: #8B7355;
+  --primary-foreground: #000000;
+  --secondary: #4A7C3B;
+  --secondary-foreground: #FFFFFF;
+  --muted: #556B5D;
+  --muted-foreground: #A5A5A5;
+  --accent: #FFD700;
+  --accent-foreground: #000000;
+  --destructive: #CC3300;
+  --destructive-foreground: #E8E8D0;
+  --border: #3C5530;
+  --input: #1A1A1A;
+  --ring: #8B7355;
+  --chart-1: #8B7355;
+  --chart-2: #3C5530;
+  --chart-3: #C9A661;
+  --chart-4: #5B6B5F;
+  --chart-5: #A89968;
+  --sidebar: #2D5016;
+  --sidebar-foreground: #E8E8D0;
+  --sidebar-primary: #8B7355;
+  --sidebar-primary-foreground: #000000;
+  --sidebar-accent: #FFD700;
+  --sidebar-accent-foreground: #000000;
+  --sidebar-border: #3C5530;
+  --sidebar-ring: #8B7355;
+  --grass-dark: #4A7C3B;
+  --grass-light: #5A9C3B;
+  --dirt: #8B6F47;
+  --stone: #818181;
+  --water: #4391FF;
+}
+
+@theme inline {
+  --font-sans: 'Courier New', monospace;
+  --font-mono: 'Courier New', monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  
+  /* Sky gradient background */
+  body {
+    @apply bg-gradient-to-b from-sky-300 to-sky-200 text-foreground min-h-screen;
+  }
+
+  @layer components {
+    /* Added pixelated blocky 3D effect with thick borders */
+    .minecraft-block {
+      @apply border-4 border-primary;
+      box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.6), inset -2px -2px 0px rgba(0, 0, 0, 0.3);
+      image-rendering: pixelated;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: crisp-edges;
+    }
+
+    /* Enhanced button with pressed effect */
+    .minecraft-button {
+      @apply bg-primary text-primary-foreground px-4 py-3 font-bold border-4 border-black transition-all;
+      box-shadow: 4px 4px 0px #000000, inset 2px 2px 0px rgba(255, 255, 255, 0.3);
+      image-rendering: pixelated;
+    }
+
+    .minecraft-button:hover {
+      @apply brightness-125;
+    }
+
+    .minecraft-button:active {
+      @apply translate-x-1 translate-y-1;
+      box-shadow: 2px 2px 0px #000000, inset 1px 1px 0px rgba(255, 255, 255, 0.3);
+    }
+
+    .minecraft-input {
+      @apply bg-input text-foreground px-3 py-2 border-4 border-black font-mono;
+      box-shadow: inset 2px 2px 0px rgba(0, 0, 0, 0.5);
+      image-rendering: pixelated;
+    }
+  }
+}
